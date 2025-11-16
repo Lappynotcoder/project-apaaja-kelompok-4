@@ -1,0 +1,21 @@
+import pandas as pd
+
+#1. Import data
+df = pd.read_excel("data study kasus.xlsx")
+
+#2. Rename kolom menjadi konsisten
+df = df.rename(columns={
+    "age": "age",
+    "Age": "age",
+    "job": "job_type",
+    "job type": "job_type",
+    "job_type": "job_type",
+    "daily social media time": "daily_social_media_time",
+    "Daily social media time": "daily_social_media_time",
+    "social platform preference": "social_platform_preference",
+    "preferred social platform": "social_platform_preference",
+    "work hours per day": "work_hours_per_day",
+    "hours_worked": "work_hours_per_day",
+    "stress level": "stress_level",
+    "stress_level": "stress_level"
+})
