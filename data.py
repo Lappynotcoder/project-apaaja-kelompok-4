@@ -1,7 +1,7 @@
 import pandas as pd
 
 #1. Import data
-df = pd.read_excel("data study kasus.xlsx")
+df = pd.read_excel("smvsprd.xlsx")
 
 #2. Rename kolom menjadi konsisten
 df = df.rename(columns={
