@@ -19,3 +19,22 @@ df = df.rename(columns={
     "stress level": "stress_level",
     "stress_level": "stress_level"
 })
+
+#3. mengambil kolom yang hanya dibutuhkan
+required_columns = [
+    "age",
+    "job_type",
+    "daily_social_media_time",
+    "social_platform_preference",
+    "work_hours_per_day",
+    "stress_level"
+]
+df = df[required_columns]
+
+#4. Hapus baris yang ada data kosong ---
+df = df.dropna()
+
+#5. Simpan sebagai file Excel baru ---
+df.to_excel("data_fix.xlsx", index=False)
+
+print("Proses selesai! File berhasil dibuat sebagai data_fix.xlsx")
