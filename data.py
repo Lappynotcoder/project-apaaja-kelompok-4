@@ -1,7 +1,7 @@
 import pandas as pd
 
 #1. Import data
-df = pd.read_excel("smvsprd.xlsx")
+df = pd.read_excel(r"C:\Users\ACER\OneDrive\Documents\DASAR PEMROGRAMAN\BARU\project-apaaja-kelompok-4\smvsprd.xlsx",engine="openpyxl")
 
 #2. Rename kolom menjadi konsisten
 df = df.rename(columns={
