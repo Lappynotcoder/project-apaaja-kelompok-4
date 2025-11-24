@@ -27,7 +27,6 @@ def generasi_dari_usia(age):
 # --------------------------------------------
 def proses_data():
     file_path = entry_file.get()
-
     if not file_path or not os.path.exists(file_path):
         messagebox.showerror("Error", "File tidak ditemukan!")
         return
@@ -36,18 +35,10 @@ def proses_data():
         global data
         data = pd.read_excel(file_path, engine="openpyxl")
 
-        # PROSES SESUAI SCRIPT AWAL
+        # PROSES DATA
         data["Generasi"] = data["age"].apply(generasi_dari_usia)
-
-        data["Sisa Waktu Luang"] = (
-            24
-            - data["daily_social_media_time"]
-            - data["work_hours_per_day"]
-        )
-
-        data["Rasio Sosmed/Kerja"] = (
-            data["daily_social_media_time"] / data["work_hours_per_day"]
-        ).replace([np.inf, -np.inf], np.nan)
+        data["Sisa Waktu Luang"] = 24 - data["daily_social_media_time"] - data["work_hours_per_day"]
+        data["Rasio Sosmed/Kerja"] = (data["daily_social_media_time"] / data["work_hours_per_day"]).replace([np.inf, -np.inf], np.nan)
 
         # Simpan output Excel
         output_file = "Data Sosial Media vs Produktifitas.xlsx"
@@ -108,12 +99,30 @@ def tampilkan_grafik():
     canvas.get_tk_widget().pack(pady=10)
 
 # --------------------------------------------
+# SIMPAN GRAFIK SEBAGAI GAMBAR
+# --------------------------------------------
+def simpan_grafik():
+    if 'canvas_widget' not in globals():
+        messagebox.showwarning("Warning", "Tidak ada grafik untuk disimpan!")
+        return
+
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=".png",
+        filetypes=[("PNG Image", "*.png"), ("JPEG Image", "*.jpg"), ("All Files", "*.*")],
+        title="Simpan Grafik Sebagai"
+    )
+    if file_path:
+        try:
+            canvas_widget.figure.savefig(file_path)
+            messagebox.showinfo("Sukses", f"Grafik berhasil disimpan sebagai:\n{file_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Gagal menyimpan grafik:\n{e}")
+
+# --------------------------------------------
 # PILIH FILE
 # --------------------------------------------
 def browse_file():
-    filepath = filedialog.askopenfilename(
-        filetypes=[("Excel Files", "*.xlsx")]
-    )
+    filepath = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
     if filepath:
         entry_file.delete(0, tk.END)
         entry_file.insert(0, filepath)
@@ -123,7 +132,7 @@ def browse_file():
 # --------------------------------------------
 root = tk.Tk()
 root.title("Data Sosial Media vs Produktivitas")
-root.geometry("750x600")
+root.geometry("750x650")
 root.resizable(False, False)
 
 # Label instruksi
@@ -133,10 +142,8 @@ label_instruksi.pack(pady=10)
 # Frame untuk input file
 frame_file = tk.Frame(root)
 frame_file.pack()
-
 entry_file = tk.Entry(frame_file, width=50)
 entry_file.pack(side=tk.LEFT, padx=5)
-
 btn_browse = tk.Button(frame_file, text="Browse", command=browse_file)
 btn_browse.pack(side=tk.LEFT)
 
@@ -155,44 +162,12 @@ dropdown_grafik.pack(pady=5)
 btn_update_grafik = tk.Button(root, text="Tampilkan Grafik", command=tampilkan_grafik)
 btn_update_grafik.pack(pady=5)
 
+# Tombol simpan grafik
+btn_simpan_grafik = tk.Button(root, text="Simpan Gambar Grafik", command=simpan_grafik)
+btn_simpan_grafik.pack(pady=5)
+
 # Status label
 label_status = tk.Label(root, text="", fg="green")
 label_status.pack()
 
-<<<<<<< HEAD
-=======
-# Visual container with scrollbar
-visual_container = tk.Frame(root, height=500, relief=tk.SUNKEN, borderwidth=2)
-visual_container.pack(fill="both", expand=True, padx=10, pady=5)
-visual_container.pack_propagate(False)
-
-canvas_visual = tk.Canvas(visual_container, bg="white")
-scroll_visual = tk.Scrollbar(visual_container, orient="vertical", command=canvas_visual.yview)
-scroll_visual.pack(side="right", fill="y")
-canvas_visual.pack(side="left", fill="both", expand=True)
-canvas_visual.configure(yscrollcommand=scroll_visual.set)
-
-frame_visual = tk.Frame(canvas_visual, bg="white")
-canvas_visual.create_window((0, 0), window=frame_visual, anchor="nw")
-
-def on_frame_config(event):
-    canvas_visual.configure(scrollregion=canvas_visual.bbox("all"))
-
-frame_visual.bind("<Configure>", on_frame_config)
-
-# Bind mousewheel for scrolling
-def on_mousewheel(event):
-    canvas_visual.yview_scroll(int(-1*(event.delta/120)), "units")
-
-canvas_visual.bind_all("<MouseWheel>", on_mousewheel)
-
-# Frame table for DataFrame
-frame_table = tk.Frame(root, relief=tk.GROOVE, borderwidth=2, height=200)
-frame_table.pack(fill="both", expand=False, padx=10, pady=10)
-frame_table.pack_propagate(False)
-
-# Initialize column selectors
-update_column_selectors()
-
->>>>>>> 0cf11df7a7cc11bfaa409f5a5eccd17cc6a2c031
 root.mainloop()
