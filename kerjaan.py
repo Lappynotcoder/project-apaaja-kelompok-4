@@ -159,40 +159,4 @@ btn_update_grafik.pack(pady=5)
 label_status = tk.Label(root, text="", fg="green")
 label_status.pack()
 
-<<<<<<< HEAD
-=======
-# Visual container with scrollbar
-visual_container = tk.Frame(root, height=500, relief=tk.SUNKEN, borderwidth=2)
-visual_container.pack(fill="both", expand=True, padx=10, pady=5)
-visual_container.pack_propagate(False)
-
-canvas_visual = tk.Canvas(visual_container, bg="white")
-scroll_visual = tk.Scrollbar(visual_container, orient="vertical", command=canvas_visual.yview)
-scroll_visual.pack(side="right", fill="y")
-canvas_visual.pack(side="left", fill="both", expand=True)
-canvas_visual.configure(yscrollcommand=scroll_visual.set)
-
-frame_visual = tk.Frame(canvas_visual, bg="white")
-canvas_visual.create_window((0, 0), window=frame_visual, anchor="nw")
-
-def on_frame_config(event):
-    canvas_visual.configure(scrollregion=canvas_visual.bbox("all"))
-
-frame_visual.bind("<Configure>", on_frame_config)
-
-# Bind mousewheel for scrolling
-def on_mousewheel(event):
-    canvas_visual.yview_scroll(int(-1*(event.delta/120)), "units")
-
-canvas_visual.bind_all("<MouseWheel>", on_mousewheel)
-
-# Frame table for DataFrame
-frame_table = tk.Frame(root, relief=tk.GROOVE, borderwidth=2, height=200)
-frame_table.pack(fill="both", expand=False, padx=10, pady=10)
-frame_table.pack_propagate(False)
-
-# Initialize column selectors
-update_column_selectors()
-
->>>>>>> 0cf11df7a7cc11bfaa409f5a5eccd17cc6a2c031
 root.mainloop()
