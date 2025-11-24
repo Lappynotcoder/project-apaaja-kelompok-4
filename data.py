@@ -33,6 +33,7 @@ df = df[required_columns]
 
 #4. Hapus baris yang ada data kosong ---
 df = df.dropna()
+df = df[df['daily_social_media_time'] != 0]
 
 #5. Simpan sebagai file Excel baru ---
 df.to_excel("data_fix.xlsx", index=False)
