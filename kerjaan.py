@@ -2,24 +2,14 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk, colorchooser
 import pandas as pd
 import numpy as np
-<<<<<<< HEAD
 import threading
 import matplotlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
-=======
-import matplotlib.pyplot as plt
-
-# ================================
-# Import Excel
-# ================================
-file_path = r"F:\cobaLagi\project-apaaja-kelompok-4\smvsprd.xlsx"
->>>>>>> e56c21c873fc13bb2a24c02ae2e4d2d824c2c6f0
 
 # Translator
 # pip install googletrans==4.0.0-rc1
 try:
-<<<<<<< HEAD
     from googletrans import Translator
     translator = Translator()
 except Exception:
@@ -75,12 +65,13 @@ CHART_OPTIONS = [
 ]
 
 # Quick-load sample path (file you uploaded earlier)
-SAMPLE_PATH = "/mnt/data/smvsprd.xlsx"  # <-- developer-provided uploaded file path
+SAMPLE_PATH = "/mnt/data/smvsprd.xlsx"
 
 # Globals
 current_df = None
 last_fig = None
 is_dark_mode = False
+chart_widgets = []  # Store chart widgets for cleanup
 
 # ----------------------------
 # Utility functions
@@ -99,7 +90,6 @@ def add_waktu_rasio(df):
         except Exception:
             df["Rasio Sosmed/Kerja"] = np.nan
     else:
-        # keep columns for consistency
         if "Waktu Luang" not in df.columns:
             df["Waktu Luang"] = "N/A"
         if "Rasio Sosmed/Kerja" not in df.columns:
@@ -117,125 +107,6 @@ def tampilkan_dataframe(df):
     vsb = ttk.Scrollbar(frame_table, orient="vertical", command=tree.yview)
     hsb = ttk.Scrollbar(frame_table, orient="horizontal", command=tree.xview)
     tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
-=======
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"File '{file_path}' tidak ada!")
-
-    data = pd.read_excel(file_path, engine="openpyxl")
-
-    # ================================
-    # Data Engineering
-    # ================================
-    data.columns = data.columns.str.strip()
-
-    # Bersihkan kolom sleep_hours
-    data["sleep_hours"] = pd.to_numeric(data["sleep_hours"], errors="coerce")
-    data["sleep_hours"] = data["sleep_hours"].fillna(0).astype(int)
-
-    # Pastikan jadi string
-    data["social_platform_preference"] = data["social_platform_preference"].astype(str)
-    data["job_type"] = data["job_type"].astype(str)
-
-    # ================================
-    # VISUAL 1 — Scatter Plot Platform
-    # ================================
-
-    # Encode job_type agar bisa dipakai sebagai nilai numerik di scatter plot
-    data["job_code"] = data["job_type"].astype("category").cat.codes
-
-    platforms = data["social_platform_preference"].unique()
-
-    colors = {
-        "Facebook": "blue",
-        "Twitter": "orange",
-        "Telegram": "green",
-        "TikTok": "red",
-        "Instagram": "purple"
-    }
-
-    plt.figure(figsize=(12, 7))
-
-    for plat in platforms:
-        subset = data[data["social_platform_preference"] == plat]
-        plt.scatter(
-            subset["age"],
-            subset["job_code"],
-            label=plat,
-            color=colors.get(plat, "gray"),
-            alpha=0.7,
-            s=80
-        )
-
-    # Ganti angka job_code menjadi label pekerjaan
-    plt.yticks(
-        ticks=data["job_code"].unique(),
-        labels=data["job_type"].astype('category').cat.categories
-    )
-
-    plt.title("Hubungan Pekerjaan, Umur, dan Platform Sosial Media")
-    plt.xlabel("Umur")
-    plt.ylabel("Jenis Pekerjaan")
-    plt.legend(title="Platform")
-    plt.grid(True, linestyle="--", alpha=0.5)
-    plt.tight_layout()
-    plt.show()
-
-    
-    # ================================
-    # VISUAL 3 — Rata-rata Durasi Sosmed per Pekerjaan
-    # ================================
-    avg_sosmed = (
-        data.groupby("job_type")["daily_social_media_time"]
-        .mean()
-        .sort_values()
-    )
-
-    plt.figure(figsize=(10, 6))
-    plt.bar(avg_sosmed.index, avg_sosmed.values, color="orange")
-    plt.title("Rata-rata Durasi Penggunaan Sosial Media per Pekerjaan")
-    plt.ylabel("Jam per Hari")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.show()
-
-    # ================================
-    # VISUAL 4 — Pie Chart Platform Sosmed
-    # ================================
-    platform_counts = data["social_platform_preference"].value_counts()
-    platform_counts.index = platform_counts.index.astype(str)
-
-    plt.figure(figsize=(8, 8))
-    plt.pie(
-        platform_counts,
-        labels=platform_counts.index,
-        autopct="%1.1f%%",
-        startangle=90
-    )
-
-    plt.title("Distribusi Pengguna Berdasarkan Platform Sosial Media")
-    plt.tight_layout()
-    plt.show()
-
-    # ================================
-    # VISUAL 5 — BAR CHART RENTANG UMUR vs LEVEL STRES
-    # ================================
-    bins = [10, 20, 30, 40, 50, 60, 70]
-    labels = ["10-20", "21-30", "31-40", "41-50", "51-60", "61-70"]
-
-    data["umur_kelompok"] = pd.cut(data["age"], bins=bins, labels=labels, right=False)
-
-    stress_by_age = data.groupby("umur_kelompok")["stress_level"].mean()
-
-    plt.figure(figsize=(10, 6))
-    plt.bar(stress_by_age.index.astype(str), stress_by_age.values, color="skyblue")
-
-    plt.title("Rata-rata Level Stres Berdasarkan Rentang Umur")
-    plt.xlabel("Rentang Umur")
-    plt.ylabel("Level Stres")
-    plt.grid(axis="y", linestyle="--", alpha=0.5)
-    plt.tight_layout()
-    plt.show()
->>>>>>> e56c21c873fc13bb2a24c02ae2e4d2d824c2c6f0
 
     cols = list(df.columns)
     tree["columns"] = cols
@@ -243,8 +114,6 @@ def tampilkan_dataframe(df):
         tree.heading(col, text=col)
         tree.column(col, width=150, anchor="center")
 
-<<<<<<< HEAD
-    # insert rows (limit a bit if extremely large)
     for i, row in df.iterrows():
         values = [safe_to_str(v) for v in list(row)]
         tree.insert("", "end", values=values)
@@ -255,7 +124,6 @@ def tampilkan_dataframe(df):
     frame_table.grid_rowconfigure(0, weight=1)
     frame_table.grid_columnconfigure(0, weight=1)
 
-    # update column dropdowns
     update_column_selectors()
 
 # ----------------------------
@@ -314,13 +182,11 @@ def translate_entire_df():
     code = LANG_CODES[lang]
     df = current_df.copy()
 
-    # find textual columns
     text_cols = [c for c in df.columns if df[c].dtype == object]
     if not text_cols:
         messagebox.showinfo("Info", "Tidak ada kolom teks untuk diterjemahkan.")
         return
 
-    # disable UI
     btn_translate.config(state=tk.DISABLED)
     label_status.config(text="🕗 Mentranslate... tunggu", fg="orange")
     root.update_idletasks()
@@ -328,7 +194,6 @@ def translate_entire_df():
     try:
         for col in text_cols:
             new_col = f"{col}_translated({code})"
-            # unique approach: translate unique strings to reduce API calls
             mask = df[col].apply(lambda x: isinstance(x, str))
             uniques = df.loc[mask, col].astype(str).unique()
             translations = {}
@@ -381,15 +246,11 @@ def update_column_selectors():
         cols = []
     else:
         cols = list(current_df.columns)
-    # numeric columns
-    numeric_cols = [c for c in cols if pd.api.types.is_numeric_dtype(current_df[c])]
-    object_cols = [c for c in cols if pd.api.types.is_object_dtype(current_df[c])]
 
-    # update dropdowns values
     combo_x['values'] = ["--Auto--"] + cols
     combo_y['values'] = ["--Auto--"] + cols
     combo_cat['values'] = ["--Auto--"] + cols
-    # set defaults if empty
+    
     if combo_x.get() not in combo_x['values']:
         combo_x.set("--Auto--")
     if combo_y.get() not in combo_y['values']:
@@ -401,8 +262,13 @@ def update_column_selectors():
 # Clear visuals
 # ----------------------------
 def clear_visuals():
-    for w in frame_visual.winfo_children():
-        w.destroy()
+    global chart_widgets
+    for widget in chart_widgets:
+        try:
+            widget.destroy()
+        except:
+            pass
+    chart_widgets = []
 
 # ----------------------------
 # Chart creation helpers
@@ -422,192 +288,251 @@ def save_current_figure():
         messagebox.showerror("Error", f"Gagal menyimpan grafik:\n{e}")
 
 def make_scatter(ax, df, xcol, ycol):
-    ax.scatter(df[xcol], df[ycol], alpha=0.6)
-    ax.set_xlabel(xcol); ax.set_ylabel(ycol); ax.set_title(f"Scatter: {xcol} vs {ycol}")
+    ax.scatter(df[xcol], df[ycol], alpha=0.6, s=50)
+    ax.set_xlabel(xcol, fontsize=10)
+    ax.set_ylabel(ycol, fontsize=10)
+    ax.set_title(f"Scatter: {xcol} vs {ycol}", fontsize=11, fontweight='bold')
+    ax.grid(True, alpha=0.3)
 
 def make_line(ax, df, xcol, ycol):
-    # sort by x if numeric or by index
     try:
-        ax.plot(df[xcol], df[ycol])
+        ax.plot(df[xcol], df[ycol], linewidth=2)
     except Exception:
-        ax.plot(df[ycol])
-    ax.set_xlabel(xcol); ax.set_ylabel(ycol); ax.set_title(f"Line: {ycol} over {xcol}")
+        ax.plot(df[ycol], linewidth=2)
+    ax.set_xlabel(xcol, fontsize=10)
+    ax.set_ylabel(ycol, fontsize=10)
+    ax.set_title(f"Line: {ycol} over {xcol}", fontsize=11, fontweight='bold')
+    ax.grid(True, alpha=0.3)
 
 def make_hist(ax, df, col):
-    ax.hist(df[col].dropna(), bins=10)
-    ax.set_title(f"Histogram: {col}"); ax.set_xlabel(col); ax.set_ylabel("Freq")
+    ax.hist(df[col].dropna(), bins=15, edgecolor='black', alpha=0.7)
+    ax.set_title(f"Histogram: {col}", fontsize=11, fontweight='bold')
+    ax.set_xlabel(col, fontsize=10)
+    ax.set_ylabel("Frequency", fontsize=10)
+    ax.grid(True, alpha=0.3, axis='y')
 
 def make_pie(ax, df, col):
     counts = df[col].value_counts()
-    ax.pie(counts, labels=counts.index.astype(str), autopct="%1.1f%%", startangle=90)
-    ax.set_title(f"Pie: {col}")
+    colors = plt.cm.Set3(range(len(counts)))
+    ax.pie(counts, labels=counts.index.astype(str), autopct="%1.1f%%", 
+           startangle=90, colors=colors)
+    ax.set_title(f"Pie Chart: {col}", fontsize=11, fontweight='bold')
 
 def make_bar_category_numeric(ax, df, cat_col, num_col):
     try:
         avg = df.groupby(cat_col)[num_col].mean().sort_values()
-        ax.bar(avg.index.astype(str), avg.values)
-        ax.set_title(f"Avg {num_col} per {cat_col}")
+        bars = ax.bar(range(len(avg)), avg.values, edgecolor='black', alpha=0.7)
+        ax.set_xticks(range(len(avg)))
         ax.set_xticklabels(avg.index.astype(str), rotation=45, ha='right')
-    except Exception:
-        ax.text(0.5, 0.5, "Tidak bisa membuat bar (periksa kolom)", ha='center')
+        ax.set_title(f"Avg {num_col} per {cat_col}", fontsize=11, fontweight='bold')
+        ax.set_ylabel(f"Average {num_col}", fontsize=10)
+        ax.grid(True, alpha=0.3, axis='y')
+    except Exception as e:
+        ax.text(0.5, 0.5, f"Error: {str(e)}", ha='center', va='center')
 
 def make_heatmap(ax, df):
     corr = df.select_dtypes(include=[np.number]).corr()
     if corr.empty:
-        ax.text(0.5, 0.5, "Tidak ada kolom numerik untuk korelasi", ha='center')
+        ax.text(0.5, 0.5, "Tidak ada kolom numerik untuk korelasi", ha='center', va='center')
         return
-    im = ax.imshow(corr, aspect='auto', cmap='coolwarm')
-    ax.set_xticks(range(len(corr.columns))); ax.set_yticks(range(len(corr.columns)))
-    ax.set_xticklabels(corr.columns, rotation=45, ha='right')
-    ax.set_yticklabels(corr.columns)
-    ax.set_title("Correlation Heatmap")
+    im = ax.imshow(corr, aspect='auto', cmap='coolwarm', vmin=-1, vmax=1)
+    ax.set_xticks(range(len(corr.columns)))
+    ax.set_yticks(range(len(corr.columns)))
+    ax.set_xticklabels(corr.columns, rotation=45, ha='right', fontsize=9)
+    ax.set_yticklabels(corr.columns, fontsize=9)
+    ax.set_title("Correlation Heatmap", fontsize=11, fontweight='bold')
     plt.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
 
 def make_box(ax, df, col):
-    ax.boxplot(df[col].dropna())
-    ax.set_title(f"Boxplot: {col}")
+    data = df[col].dropna()
+    bp = ax.boxplot([data], patch_artist=True)
+    for patch in bp['boxes']:
+        patch.set_facecolor('lightblue')
+    ax.set_xticklabels([col])
+    ax.set_title(f"Boxplot: {col}", fontsize=11, fontweight='bold')
+    ax.set_ylabel("Values", fontsize=10)
+    ax.grid(True, alpha=0.3, axis='y')
 
 def make_area(ax, df, xcol, ycol):
     try:
-        ax.fill_between(df[xcol], df[ycol], alpha=0.4)
-        ax.set_title(f"Area: {ycol} over {xcol}")
+        ax.fill_between(range(len(df)), df[ycol], alpha=0.5)
+        ax.plot(range(len(df)), df[ycol], linewidth=2)
+        ax.set_title(f"Area Chart: {ycol}", fontsize=11, fontweight='bold')
+        ax.set_xlabel("Index", fontsize=10)
+        ax.set_ylabel(ycol, fontsize=10)
+        ax.grid(True, alpha=0.3)
     except Exception:
-        ax.text(0.5, 0.5, "Tidak bisa membuat area chart", ha='center')
+        ax.text(0.5, 0.5, "Tidak bisa membuat area chart", ha='center', va='center')
 
 # ----------------------------
-# Main function to render charts inside scrollable frame
+# Main function to render charts in grid layout
 # ----------------------------
 def render_charts():
-    global last_fig, is_dark_mode
+    global last_fig, is_dark_mode, chart_widgets
     clear_visuals()
+    
     if current_df is None:
         messagebox.showwarning("Peringatan", "Muat data dulu.")
         return
+    
     df = current_df.copy()
-    # determine selected chart type(s)
     sel = combo_chart.get()
-    charts_to_draw = []
-    if sel == "All Charts" or sel == "All Charts" or sel == "All Charts":
-        charts_to_draw = CHART_OPTIONS[:-1]  # all except "All Charts"
+    
+    # Determine which charts to draw
+    if sel == "All Charts":
+        charts_to_draw = CHART_OPTIONS[:-1]
     else:
         charts_to_draw = [sel]
 
-    # resolve columns selected
+    # Get column selections
     xsel = combo_x.get()
     ysel = combo_y.get()
     catsel = combo_cat.get()
 
-    # provide auto choices if --Auto--
     cols = list(df.columns)
     numeric_cols = [c for c in cols if pd.api.types.is_numeric_dtype(df[c])]
     object_cols = [c for c in cols if pd.api.types.is_object_dtype(df[c])]
 
-    # helper to pick default
     def pick_x():
         if xsel != "--Auto--" and xsel in cols:
             return xsel
-        if numeric_cols:
-            return numeric_cols[0]
-        if cols:
-            return cols[0]
-        return None
+        return numeric_cols[0] if numeric_cols else (cols[0] if cols else None)
 
     def pick_y():
         if ysel != "--Auto--" and ysel in cols:
             return ysel
-        if numeric_cols:
-            return numeric_cols[1] if len(numeric_cols) > 1 else numeric_cols[0]
-        if cols:
-            return cols[0]
-        return None
+        return numeric_cols[1] if len(numeric_cols) > 1 else (numeric_cols[0] if numeric_cols else None)
 
     def pick_cat():
         if catsel != "--Auto--" and catsel in cols:
             return catsel
-        if object_cols:
-            return object_cols[0]
-        return None
+        return object_cols[0] if object_cols else None
 
     xcol = pick_x()
     ycol = pick_y()
     catcol = pick_cat()
 
-    # Set matplotlib theme for dark mode
+    # Set theme
     bg = "#2e2e2e" if is_dark_mode else "white"
     fg = "white" if is_dark_mode else "black"
-
-    for chart in charts_to_draw:
-        fig = plt.Figure(figsize=(7, 4), facecolor=bg)
-        ax = fig.add_subplot(111)
-        ax.tick_params(colors=fg)
-        ax.title.set_color(fg)
+    
+    # Calculate grid layout
+    num_charts = len(charts_to_draw)
+    cols_per_row = 2
+    
+    # Create charts
+    for idx, chart in enumerate(charts_to_draw):
+        # Create a frame for each chart
+        chart_frame = tk.Frame(frame_visual, relief=tk.RIDGE, borderwidth=2, bg=bg)
+        chart_frame.grid(row=idx//cols_per_row, column=idx%cols_per_row, 
+                        padx=10, pady=10, sticky="nsew")
+        chart_widgets.append(chart_frame)
+        
+        # Create figure with proper sizing
+        fig = plt.Figure(figsize=(6, 4.5), facecolor=bg, dpi=100)
+        ax = fig.add_subplot(111, facecolor=bg)
+        
+        # Style the axis
+        ax.tick_params(colors=fg, labelsize=9)
         for spine in ax.spines.values():
             spine.set_edgecolor(fg)
-        # draw appropriate chart
-        if chart == "Scatter Plot":
-            if xcol and ycol and xcol in cols and ycol in cols:
-                if pd.api.types.is_numeric_dtype(df[xcol]) and pd.api.types.is_numeric_dtype(df[ycol]):
-                    make_scatter(ax, df, xcol, ycol)
+        
+        # Draw appropriate chart
+        try:
+            if chart == "Scatter Plot":
+                if xcol and ycol and xcol in cols and ycol in cols:
+                    if pd.api.types.is_numeric_dtype(df[xcol]) and pd.api.types.is_numeric_dtype(df[ycol]):
+                        make_scatter(ax, df, xcol, ycol)
+                    else:
+                        ax.text(0.5, 0.5, "Scatter membutuhkan 2 kolom numerik", 
+                               ha="center", va="center", color=fg)
                 else:
-                    ax.text(0.5, 0.5, "Scatter membutuhkan 2 kolom numerik", ha="center", color=fg)
-            else:
-                ax.text(0.5, 0.5, "Kolom X/Y tidak tersedia", ha="center", color=fg)
+                    ax.text(0.5, 0.5, "Kolom X/Y tidak tersedia", 
+                           ha="center", va="center", color=fg)
 
-        elif chart == "Line Chart":
-            if xcol and ycol and xcol in cols and ycol in cols:
-                make_line(ax, df, xcol, ycol)
-            else:
-                ax.text(0.5, 0.5, "Kolom X/Y tidak tersedia", ha="center", color=fg)
+            elif chart == "Line Chart":
+                if xcol and ycol and xcol in cols and ycol in cols:
+                    make_line(ax, df, xcol, ycol)
+                else:
+                    ax.text(0.5, 0.5, "Kolom X/Y tidak tersedia", 
+                           ha="center", va="center", color=fg)
 
-        elif chart == "Bar Chart (Category vs Numeric)":
-            if catcol and xcol and catcol in cols and xcol in cols:
-                make_bar_category_numeric(ax, df, catcol, xcol)
-            else:
-                ax.text(0.5, 0.5, "Butuh 1 kolom kategori dan 1 numerik", ha="center", color=fg)
+            elif chart == "Bar Chart (Category vs Numeric)":
+                if catcol and xcol and catcol in cols and xcol in cols:
+                    make_bar_category_numeric(ax, df, catcol, xcol)
+                else:
+                    ax.text(0.5, 0.5, "Butuh 1 kolom kategori dan 1 numerik", 
+                           ha="center", va="center", color=fg)
 
-        elif chart == "Histogram":
-            if xcol and xcol in cols and pd.api.types.is_numeric_dtype(df[xcol]):
-                make_hist(ax, df, xcol)
-            elif numeric_cols:
-                make_hist(ax, df, numeric_cols[0])
-            else:
-                ax.text(0.5, 0.5, "Tidak ada kolom numerik", ha="center", color=fg)
+            elif chart == "Histogram":
+                if xcol and xcol in cols and pd.api.types.is_numeric_dtype(df[xcol]):
+                    make_hist(ax, df, xcol)
+                elif numeric_cols:
+                    make_hist(ax, df, numeric_cols[0])
+                else:
+                    ax.text(0.5, 0.5, "Tidak ada kolom numerik", 
+                           ha="center", va="center", color=fg)
 
-        elif chart == "Pie Chart":
-            if catcol and catcol in cols:
-                make_pie(ax, df, catcol)
-            elif object_cols:
-                make_pie(ax, df, object_cols[0])
-            else:
-                ax.text(0.5, 0.5, "Tidak ada kolom kategorikal", ha="center", color=fg)
+            elif chart == "Pie Chart":
+                if catcol and catcol in cols:
+                    make_pie(ax, df, catcol)
+                elif object_cols:
+                    make_pie(ax, df, object_cols[0])
+                else:
+                    ax.text(0.5, 0.5, "Tidak ada kolom kategorikal", 
+                           ha="center", va="center", color=fg)
 
-        elif chart == "Heatmap (Correlation)":
-            make_heatmap(ax, df)
+            elif chart == "Heatmap (Correlation)":
+                make_heatmap(ax, df)
 
-        elif chart == "Box Plot":
-            target = xcol if xcol and xcol in cols else (numeric_cols[0] if numeric_cols else None)
-            if target:
-                make_box(ax, df, target)
-            else:
-                ax.text(0.5, 0.5, "Tidak ada kolom numerik", ha="center", color=fg)
+            elif chart == "Box Plot":
+                target = xcol if xcol and xcol in cols else (numeric_cols[0] if numeric_cols else None)
+                if target and pd.api.types.is_numeric_dtype(df[target]):
+                    make_box(ax, df, target)
+                else:
+                    ax.text(0.5, 0.5, "Tidak ada kolom numerik", 
+                           ha="center", va="center", color=fg)
 
-        elif chart == "Area Chart":
-            if xcol and ycol and xcol in cols and ycol in cols:
-                make_area(ax, df, xcol, ycol)
-            else:
-                ax.text(0.5, 0.5, "Kolom X/Y tidak tersedia", ha="center", color=fg)
-
-        # embed figure into frame_visual
-        canvas = FigureCanvasTkAgg(fig, master=frame_visual)
+            elif chart == "Area Chart":
+                if ycol and ycol in cols:
+                    make_area(ax, df, xcol, ycol)
+                else:
+                    ax.text(0.5, 0.5, "Kolom Y tidak tersedia", 
+                           ha="center", va="center", color=fg)
+        except Exception as e:
+            ax.text(0.5, 0.5, f"Error: {str(e)}", ha='center', va='center', color=fg)
+        
+        # Apply color theme to text elements
+        if ax.get_title():
+            ax.title.set_color(fg)
+        if ax.get_xlabel():
+            ax.xaxis.label.set_color(fg)
+        if ax.get_ylabel():
+            ax.yaxis.label.set_color(fg)
+        
+        # Tight layout
+        fig.tight_layout()
+        
+        # Embed figure
+        canvas = FigureCanvasTkAgg(fig, master=chart_frame)
         canvas.draw()
-        w = canvas.get_tk_widget()
-        w.pack(pady=8, fill="both", expand=True)
-        # store last_fig for save
+        canvas_widget = canvas.get_tk_widget()
+        canvas_widget.pack(fill="both", expand=True, padx=5, pady=5)
+        chart_widgets.append(canvas_widget)
+        
         last_fig = fig
-
-    # after adding charts, update scrollregion
+    
+    # Configure grid weights for responsive layout
+    for i in range((num_charts + cols_per_row - 1) // cols_per_row):
+        frame_visual.grid_rowconfigure(i, weight=1)
+    for i in range(cols_per_row):
+        frame_visual.grid_columnconfigure(i, weight=1)
+    
+    # Update scroll region
     frame_visual.update_idletasks()
     canvas_visual.configure(scrollregion=canvas_visual.bbox("all"))
+    
+    label_status.config(text=f"✔ {len(charts_to_draw)} grafik ditampilkan", fg="green")
 
 # ----------------------------
 # Dark mode toggle
@@ -617,128 +542,137 @@ def toggle_dark_mode():
     is_dark_mode = not is_dark_mode
     bg = "#2e2e2e" if is_dark_mode else "SystemButtonFace"
     fg = "white" if is_dark_mode else "black"
+    
     root.configure(bg=bg)
-    for widget in [frame_top, frame_lang, frame_save, frame_table, frame_visual]:
+    for widget in [frame_top, frame_lang, frame_save, frame_table, frame_chart, frame_actions]:
         widget.configure(bg=bg)
-    # adjust labels/buttons color
-    for lbl in root.winfo_children():
-        try:
-            lbl.configure(bg=bg, fg=fg)
-        except Exception:
-            pass
-    # re-render charts if any
-    if current_df is not None:
+    
+    # Update canvas background
+    canvas_visual.configure(bg=bg)
+    frame_visual.configure(bg=bg)
+    
+    # Re-render charts if any exist
+    if current_df is not None and chart_widgets:
         render_charts()
 
 # ----------------------------
 # Build GUI
 # ----------------------------
 root = tk.Tk()
-root.title("Excel Analyzer - Full Features")
-root.geometry("1200x800")
+root.title("Excel Analyzer - Enhanced Visual Layout")
+root.geometry("1400x900")
 
-# Top frame: load, quick load, translate controls
-frame_top = tk.Frame(root)
+# Top frame: load, quick load
+frame_top = tk.Frame(root, bg="SystemButtonFace")
 frame_top.pack(fill="x", pady=6)
 
-btn_load = tk.Button(frame_top, text="Load Excel", command=load_excel)
-btn_load.grid(row=0, column=0, padx=6)
+btn_load = tk.Button(frame_top, text="📁 Load Excel", command=load_excel, font=("Arial", 10, "bold"))
+btn_load.grid(row=0, column=0, padx=6, pady=5)
 
-btn_quick = tk.Button(frame_top, text="Quick Load Sample", command=quick_load)
-btn_quick.grid(row=0, column=1, padx=6)
+btn_quick = tk.Button(frame_top, text="⚡ Quick Load Sample", command=quick_load, font=("Arial", 10))
+btn_quick.grid(row=0, column=1, padx=6, pady=5)
 
 # Translate controls
-frame_lang = tk.Frame(root)
+frame_lang = tk.Frame(root, bg="SystemButtonFace")
 frame_lang.pack(fill="x", pady=6)
 
-tk.Label(frame_lang, text="Pilih Bahasa Translate:").grid(row=0, column=0, padx=5)
+tk.Label(frame_lang, text="Pilih Bahasa Translate:", bg="SystemButtonFace").grid(row=0, column=0, padx=5)
 combo_lang = ttk.Combobox(frame_lang, values=LANG_DISPLAY, width=40)
 combo_lang.grid(row=0, column=1, padx=5)
 combo_lang.set("English (en)")
 
-btn_translate = tk.Button(frame_lang, text="Translate Seluruh Isi", command=translate_entire_df_thread)
+btn_translate = tk.Button(frame_lang, text="🌐 Translate Seluruh Isi", command=translate_entire_df_thread)
 btn_translate.grid(row=0, column=2, padx=6)
 
 # Save controls
-frame_save = tk.Frame(root)
+frame_save = tk.Frame(root, bg="SystemButtonFace")
 frame_save.pack(fill="x", pady=6)
 
-tk.Label(frame_save, text="Nama Output:").grid(row=0, column=0, padx=5)
+tk.Label(frame_save, text="Nama Output:", bg="SystemButtonFace").grid(row=0, column=0, padx=5)
 entry_filename = tk.Entry(frame_save, width=40)
 entry_filename.grid(row=0, column=1, padx=5)
 entry_filename.insert(0, "output.xlsx")
 
-btn_save = tk.Button(frame_save, text="Save", command=save_file)
+btn_save = tk.Button(frame_save, text="💾 Save", command=save_file)
 btn_save.grid(row=0, column=2, padx=4)
-btn_save_as = tk.Button(frame_save, text="Save As...", command=save_as_file)
+btn_save_as = tk.Button(frame_save, text="💾 Save As...", command=save_as_file)
 btn_save_as.grid(row=0, column=3, padx=4)
 
 # Chart selectors
-frame_chart = tk.Frame(root)
+frame_chart = tk.Frame(root, bg="SystemButtonFace")
 frame_chart.pack(fill="x", pady=6)
 
-tk.Label(frame_chart, text="Jenis Grafik:").grid(row=0, column=0, padx=5)
-combo_chart = ttk.Combobox(frame_chart, values=CHART_OPTIONS, width=30)
+tk.Label(frame_chart, text="Jenis Grafik:", bg="SystemButtonFace").grid(row=0, column=0, padx=5)
+combo_chart = ttk.Combobox(frame_chart, values=CHART_OPTIONS, width=28)
 combo_chart.grid(row=0, column=1, padx=5)
 combo_chart.set("All Charts")
 
-tk.Label(frame_chart, text="Pilih Kolom X:").grid(row=0, column=2, padx=5)
-combo_x = ttk.Combobox(frame_chart, values=["--Auto--"], width=25)
+tk.Label(frame_chart, text="Kolom X:", bg="SystemButtonFace").grid(row=0, column=2, padx=5)
+combo_x = ttk.Combobox(frame_chart, values=["--Auto--"], width=20)
 combo_x.grid(row=0, column=3, padx=5)
 combo_x.set("--Auto--")
 
-tk.Label(frame_chart, text="Pilih Kolom Y:").grid(row=0, column=4, padx=5)
-combo_y = ttk.Combobox(frame_chart, values=["--Auto--"], width=25)
+tk.Label(frame_chart, text="Kolom Y:", bg="SystemButtonFace").grid(row=0, column=4, padx=5)
+combo_y = ttk.Combobox(frame_chart, values=["--Auto--"], width=20)
 combo_y.grid(row=0, column=5, padx=5)
 combo_y.set("--Auto--")
 
-tk.Label(frame_chart, text="Pilih Kolom Kategori:").grid(row=0, column=6, padx=5)
-combo_cat = ttk.Combobox(frame_chart, values=["--Auto--"], width=25)
+tk.Label(frame_chart, text="Kolom Kategori:", bg="SystemButtonFace").grid(row=0, column=6, padx=5)
+combo_cat = ttk.Combobox(frame_chart, values=["--Auto--"], width=20)
 combo_cat.grid(row=0, column=7, padx=5)
 combo_cat.set("--Auto--")
 
-# Visual container (scrollable)
-visual_container = tk.Frame(root, height=400)
-visual_container.pack(fill="both", expand=False, pady=10)
+# Actions frame
+frame_actions = tk.Frame(root, bg="SystemButtonFace")
+frame_actions.pack(fill="x", pady=6)
 
-canvas_visual = tk.Canvas(visual_container)
+btn_render = tk.Button(frame_actions, text="📊 Tampilkan Grafik", command=render_charts, 
+                       font=("Arial", 10, "bold"), bg="#4CAF50", fg="white")
+btn_render.grid(row=0, column=0, padx=6)
+
+btn_save_chart = tk.Button(frame_actions, text="📥 Download Grafik (PNG)", command=save_current_figure,
+                           font=("Arial", 10))
+btn_save_chart.grid(row=0, column=1, padx=6)
+
+btn_toggle_dark = tk.Button(frame_actions, text="🌙 Toggle Dark Mode", command=toggle_dark_mode,
+                            font=("Arial", 10))
+btn_toggle_dark.grid(row=0, column=2, padx=6)
+
+# Status label
+label_status = tk.Label(root, text="Siap untuk memuat data", fg="blue", font=("Arial", 10))
+label_status.pack(pady=5)
+
+# Visual container with scrollbar
+visual_container = tk.Frame(root, height=500, relief=tk.SUNKEN, borderwidth=2)
+visual_container.pack(fill="both", expand=True, padx=10, pady=5)
+visual_container.pack_propagate(False)
+
+canvas_visual = tk.Canvas(visual_container, bg="white")
 scroll_visual = tk.Scrollbar(visual_container, orient="vertical", command=canvas_visual.yview)
 scroll_visual.pack(side="right", fill="y")
 canvas_visual.pack(side="left", fill="both", expand=True)
 canvas_visual.configure(yscrollcommand=scroll_visual.set)
 
-frame_visual = tk.Frame(canvas_visual)
-canvas_visual.create_window((0,0), window=frame_visual, anchor="nw")
+frame_visual = tk.Frame(canvas_visual, bg="white")
+canvas_visual.create_window((0, 0), window=frame_visual, anchor="nw")
 
 def on_frame_config(event):
     canvas_visual.configure(scrollregion=canvas_visual.bbox("all"))
+
 frame_visual.bind("<Configure>", on_frame_config)
 
-# Buttons for rendering, saving chart, dark mode toggle
-frame_actions = tk.Frame(root)
-frame_actions.pack(fill="x", pady=6)
+# Bind mousewheel for scrolling
+def on_mousewheel(event):
+    canvas_visual.yview_scroll(int(-1*(event.delta/120)), "units")
 
-btn_render = tk.Button(frame_actions, text="Tampilkan Grafik", command=render_charts)
-btn_render.grid(row=0, column=0, padx=6)
-
-btn_save_chart = tk.Button(frame_actions, text="Download Grafik (PNG)", command=save_current_figure)
-btn_save_chart.grid(row=0, column=1, padx=6)
-
-btn_toggle_dark = tk.Button(frame_actions, text="Toggle Dark Mode", command=toggle_dark_mode)
-btn_toggle_dark.grid(row=0, column=2, padx=6)
-
-label_status = tk.Label(root, text="", fg="green")
-label_status.pack()
+canvas_visual.bind_all("<MouseWheel>", on_mousewheel)
 
 # Frame table for DataFrame
-frame_table = tk.Frame(root, relief=tk.GROOVE, borderwidth=2)
-frame_table.pack(fill="both", expand=True, padx=10, pady=10)
+frame_table = tk.Frame(root, relief=tk.GROOVE, borderwidth=2, height=200)
+frame_table.pack(fill="both", expand=False, padx=10, pady=10)
+frame_table.pack_propagate(False)
 
-# initialize column selectors
+# Initialize column selectors
 update_column_selectors()
 
 root.mainloop()
-=======
-except Exception as e:
-    print(f"❌ Terjadi kesalahan tak terduga: {e}")
->>>>>>> e56c21c873fc13bb2a24c02ae2e4d2d824c2c6f0
