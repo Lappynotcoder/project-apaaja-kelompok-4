@@ -1,7 +1,7 @@
 import pandas as pd
 
 #1. Import data
-df = pd.read_excel("smvsprd.xlsx")
+df = pd.read_excel("F:\cobaLagi\project-apaaja-kelompok-4\smvsprd.xlsx")
 
 #2. Rename kolom menjadi konsisten
 df = df.rename(columns={
