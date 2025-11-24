@@ -1,7 +1,11 @@
 import pandas as pd
 
 #1. Import data
+<<<<<<< HEAD
 df = pd.read_excel("F:\cobaLagi\project-apaaja-kelompok-4\smvsprd.xlsx")
+=======
+df = pd.read_excel(r"C:\Users\ACER\OneDrive\Documents\DASAR PEMROGRAMAN\BARU\project-apaaja-kelompok-4\smvsprd.xlsx",engine="openpyxl")
+>>>>>>> 34156d8cfa5a170924eb1d3b97a6edcb4ec7bc32
 
 #2. Rename kolom menjadi konsisten
 df = df.rename(columns={
@@ -33,6 +37,7 @@ df = df[required_columns]
 
 #4. Hapus baris yang ada data kosong ---
 df = df.dropna()
+df = df[df['daily_social_media_time'] != 0]
 
 #5. Simpan sebagai file Excel baru ---
 df.to_excel("data_fix.xlsx", index=False)
