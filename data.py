@@ -37,6 +37,6 @@ for i in required_columns:
     df=df[df[i]!=0]
 
 #5. Simpan sebagai file Excel baru ---
-df.to_excel("data_fix.xlsx", index=False)
+df.to_excel("data_clean.xlsx", index=False)
 
 print("Proses selesai! File berhasil dibuat sebagai data_fix.xlsx")

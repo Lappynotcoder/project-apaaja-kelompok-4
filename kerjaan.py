@@ -46,7 +46,7 @@ def proses_data():
         data["Sisa Waktu Luang"] = 24 - data[col_sosmed] - data[col_work]
         
         # Simpan output
-        output_file = "Data_Processed.xlsx"
+        output_file = "Data Final.xlsx"
         data.to_excel(output_file, index=False)
         
         label_status.config(text=f"✔ Data Siap! Disimpan ke: {output_file}")
@@ -101,7 +101,7 @@ def tampilkan_grafik():
         ax.grid(True, linestyle="--", alpha=0.5)
 
     # 4. STRESS VS SOSMED (SIMPEL)
-    elif chart_type == "Stress vs Sosmed (Simpel)":
+    elif chart_type == "Stress vs Sosmed":
         avg_stress = data.groupby("stress_level")["daily_social_media_time"].mean()
         avg_stress.plot(kind="bar", ax=ax, color="orange", rot=0)
         ax.set_title("Hubungan Tingkat Stress & Lama Main Sosmed")

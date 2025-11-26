@@ -1,6 +1,0 @@
-@echo off
-echo Menjalankan Aplikasi GUI...
-py -3.11 kerjaan.py
-echo.
-echo Tekan tombol apa saja untuk menutup...
-pause >nul
