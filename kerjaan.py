@@ -62,7 +62,7 @@ def tampilkan_grafik():
     if 'canvas_widget' in globals():
         canvas_widget.get_tk_widget().destroy()
 
-    fig, ax = plt.subplots(figsize=(6,4))
+    fig, ax = plt.subplots(figsize=(10,4.5))
     chart_type = grafik_var.get()
 
     if chart_type == "Bar Chart":
@@ -71,6 +71,7 @@ def tampilkan_grafik():
         ax.set_title("Rata-rata Rasio Sosmed/Kerja per Generasi")
         ax.set_ylabel("Rasio Sosmed/Kerja")
         ax.set_xlabel("Generasi")
+        ax.set_xticklabels(rasio_per_generasi.index, rotation=45, ha='right')
         ax.grid(axis="y", linestyle="--", alpha=0.7)
 
     elif chart_type == "Pie Chart":
@@ -93,6 +94,7 @@ def tampilkan_grafik():
         ax.set_xlabel("Generasi")
         ax.grid(True, linestyle="--", alpha=0.7)
 
+    plt.tight_layout()
     canvas = FigureCanvasTkAgg(fig, master=root)
     canvas.draw()
     canvas_widget = canvas
@@ -132,7 +134,7 @@ def browse_file():
 # --------------------------------------------
 root = tk.Tk()
 root.title("Data Sosial Media vs Produktivitas")
-root.geometry("750x650")
+root.geometry("1280x720")
 root.resizable(False, False)
 
 # Label instruksi
