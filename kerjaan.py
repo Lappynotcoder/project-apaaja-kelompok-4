@@ -79,12 +79,6 @@ def tampilkan_grafik():
         ax.pie(jumlah_per_generasi, labels=jumlah_per_generasi.index, autopct="%1.1f%%", startangle=140)
         ax.set_title("Distribusi Jumlah Responden per Generasi")
 
-    elif chart_type == "Scatter Plot":
-        ax.scatter(data["daily_social_media_time"], data["Sisa Waktu Luang"], color="orange")
-        ax.set_title("Scatter: Waktu Sosmed vs Sisa Waktu Luang")
-        ax.set_xlabel("Daily Social Media Time (jam)")
-        ax.set_ylabel("Sisa Waktu Luang (jam)")
-        ax.grid(True, linestyle="--", alpha=0.7)
 
     elif chart_type == "Line Chart":
         rata2_waktu = data.groupby("Generasi")["Sisa Waktu Luang"].mean()
@@ -93,6 +87,39 @@ def tampilkan_grafik():
         ax.set_ylabel("Sisa Waktu Luang (jam)")
         ax.set_xlabel("Generasi")
         ax.grid(True, linestyle="--", alpha=0.7)
+
+    elif chart_type == "Heatmap":
+        # Ambil kolom numerik untuk korelasi
+        cols = ["age", "daily_social_media_time", "work_hours_per_day", 
+                "Sisa Waktu Luang", "Rasio Sosmed/Kerja"]
+        
+        corr = data[cols].corr()
+
+        # Heatmap manual tanpa seaborn
+        cax = ax.matshow(corr, cmap="viridis")
+
+        fig.colorbar(cax)
+
+        ax.set_xticks(range(len(cols)))
+        ax.set_yticks(range(len(cols)))
+
+        ax.set_xticklabels(cols, rotation=45, ha="left")
+        ax.set_yticklabels(cols)
+
+        ax.set_title("Heatmap Korelasi Variabel", pad=20)
+
+    elif chart_type == "Sosmed per Pekerjaan":
+        # Hitung rata-rata per pekerjaan & urutkan dari yang terbesar
+        job_sosmed = data.groupby("job_type")["daily_social_media_time"].mean().sort_values()
+        
+        # plot(kind='barh') untuk horizontal
+        job_sosmed.plot(kind="barh", ax=ax, color="teal")
+        
+        ax.set_title("Rata-rata Waktu Sosmed per Jenis Pekerjaan")
+        ax.set_xlabel("Rata-rata Waktu (Jam)")
+        ax.set_ylabel("Pekerjaan")
+        ax.grid(axis="x", linestyle="--", alpha=0.7)
+
 
     plt.tight_layout()
     canvas = FigureCanvasTkAgg(fig, master=root)
@@ -155,7 +182,13 @@ btn_proses.pack(pady=10)
 
 # Pilihan grafik
 grafik_var = tk.StringVar(value="Bar Chart")
-options = ["Bar Chart", "Pie Chart", "Scatter Plot", "Line Chart"]
+options = [
+    "Bar Chart", "Pie Chart", "Scatter Plot", "Line Chart", 
+    "Heatmap", # Heatmap preferensi sosmed yang sebelumnya
+    "Stress vs Sosmed", 
+    "Sosmed per Pekerjaan", 
+    "Korelasi Fitur"
+]
 label_grafik = tk.Label(root, text="Pilih jenis grafik:")
 label_grafik.pack()
 dropdown_grafik = tk.OptionMenu(root, grafik_var, *options)
